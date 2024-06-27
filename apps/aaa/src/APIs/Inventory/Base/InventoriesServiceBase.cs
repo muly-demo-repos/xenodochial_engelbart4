@@ -1,0 +1,133 @@
+using Aaa.APIs;
+using Aaa.APIs.Common;
+using Aaa.APIs.Dtos;
+using Aaa.APIs.Errors;
+using Aaa.APIs.Extensions;
+using Aaa.Infrastructure;
+using Aaa.Infrastructure.Models;
+using Microsoft.EntityFrameworkCore;
+
+namespace Aaa.APIs;
+
+public abstract class InventoriesServiceBase : IInventoriesService
+{
+    protected readonly AaaDbContext _context;
+
+    public InventoriesServiceBase(AaaDbContext context)
+    {
+        _context = context;
+    }
+
+    /// <summary>
+    /// Create one Inventory
+    /// </summary>
+    public async Task<InventoryDto> CreateInventory(InventoryCreateInput createDto)
+    {
+        var inventory = new Inventory
+        {
+            CreatedAt = createDto.CreatedAt,
+            UpdatedAt = createDto.UpdatedAt,
+            Location = createDto.Location,
+            Quantity = createDto.Quantity
+        };
+
+        if (createDto.Id != null)
+        {
+            inventory.Id = createDto.Id;
+        }
+
+        _context.Inventories.Add(inventory);
+        await _context.SaveChangesAsync();
+
+        var result = await _context.FindAsync<Inventory>(inventory.Id);
+
+        if (result == null)
+        {
+            throw new NotFoundException();
+        }
+
+        return result.ToDto();
+    }
+
+    /// <summary>
+    /// Delete one Inventory
+    /// </summary>
+    public async Task DeleteInventory(InventoryIdDto idDto)
+    {
+        var inventory = await _context.Inventories.FindAsync(idDto.Id);
+        if (inventory == null)
+        {
+            throw new NotFoundException();
+        }
+
+        _context.Inventories.Remove(inventory);
+        await _context.SaveChangesAsync();
+    }
+
+    /// <summary>
+    /// Find many Inventories
+    /// </summary>
+    public async Task<List<InventoryDto>> Inventories(InventoryFindMany findManyArgs)
+    {
+        var inventories = await _context
+            .Inventories.ApplyWhere(findManyArgs.Where)
+            .ApplySkip(findManyArgs.Skip)
+            .ApplyTake(findManyArgs.Take)
+            .ApplyOrderBy(findManyArgs.SortBy)
+            .ToListAsync();
+        return inventories.ConvertAll(inventory => inventory.ToDto());
+    }
+
+    /// <summary>
+    /// Get one Inventory
+    /// </summary>
+    public async Task<InventoryDto> Inventory(InventoryIdDto idDto)
+    {
+        var inventories = await this.Inventories(
+            new InventoryFindMany { Where = new InventoryWhereInput { Id = idDto.Id } }
+        );
+        var inventory = inventories.FirstOrDefault();
+        if (inventory == null)
+        {
+            throw new NotFoundException();
+        }
+
+        return inventory;
+    }
+
+    /// <summary>
+    /// Meta data about Inventory records
+    /// </summary>
+    public async Task<MetadataDto> InventoriesMeta(InventoryFindMany findManyArgs)
+    {
+        var count = await _context.Inventories.ApplyWhere(findManyArgs.Where).CountAsync();
+
+        return new MetadataDto { Count = count };
+    }
+
+    /// <summary>
+    /// Update one Inventory
+    /// </summary>
+    public async Task UpdateInventory(InventoryIdDto idDto, InventoryUpdateInput updateDto)
+    {
+        var inventory = updateDto.ToModel(idDto);
+
+        _context.Entry(inventory).State = EntityState.Modified;
+
+        try
+        {
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!_context.Inventories.Any(e => e.Id == inventory.Id))
+            {
+                throw new NotFoundException();
+            }
+            else
+            {
+                throw;
+            }
+        }
+    }
+}
