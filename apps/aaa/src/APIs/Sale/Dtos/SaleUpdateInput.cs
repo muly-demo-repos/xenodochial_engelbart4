@@ -12,9 +12,9 @@ public class SaleUpdateInput
 
     public double? TotalAmount { get; set; }
 
-    public CustomerIdDto? Customer { get; set; }
+    public string? Customer { get; set; }
 
-    public CarIdDto? Car { get; set; }
+    public string? Car { get; set; }
 
-    public EmployeeIdDto? Employee { get; set; }
+    public string? Employee { get; set; }
 }

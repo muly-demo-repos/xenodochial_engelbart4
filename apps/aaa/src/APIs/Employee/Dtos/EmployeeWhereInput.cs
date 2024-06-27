@@ -16,5 +16,5 @@ public class EmployeeWhereInput
 
     public double? Salary { get; set; }
 
-    public List<SaleIdDto>? Sales { get; set; }
+    public List<string>? Sales { get; set; }
 }

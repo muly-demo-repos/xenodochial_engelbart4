@@ -5,9 +5,9 @@ namespace Aaa.APIs.Extensions;
 
 public static class CustomersExtensions
 {
-    public static CustomerDto ToDto(this Customer model)
+    public static Customer ToDto(this CustomerDbModel model)
     {
-        return new CustomerDto
+        return new Customer
         {
             Id = model.Id,
             CreatedAt = model.CreatedAt,
@@ -16,15 +16,18 @@ public static class CustomersExtensions
             Email = model.Email,
             Phone = model.Phone,
             Address = model.Address,
-            Sales = model.Sales?.Select(x => new SaleIdDto { Id = x.Id }).ToList(),
+            Sales = model.Sales?.Select(x => x.Id).ToList(),
         };
     }
 
-    public static Customer ToModel(this CustomerUpdateInput updateDto, CustomerIdDto idDto)
+    public static CustomerDbModel ToModel(
+        this CustomerUpdateInput updateDto,
+        CustomerWhereUniqueInput uniqueId
+    )
     {
-        var customer = new Customer
+        var customer = new CustomerDbModel
         {
-            Id = idDto.Id,
+            Id = uniqueId.Id,
             Name = updateDto.Name,
             Email = updateDto.Email,
             Phone = updateDto.Phone,

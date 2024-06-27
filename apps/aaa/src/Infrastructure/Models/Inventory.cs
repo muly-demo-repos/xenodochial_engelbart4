@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Aaa.Infrastructure.Models;
 
 [Table("Inventories")]
-public class Inventory
+public class InventoryDbModel
 {
     [Key()]
     [Required()]

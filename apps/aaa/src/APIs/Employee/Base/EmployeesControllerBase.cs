@@ -23,7 +23,7 @@ public abstract class EmployeesControllerBase : ControllerBase
     /// </summary>
     [HttpPost()]
     [Authorize(Roles = "user")]
-    public async Task<ActionResult<EmployeeDto>> CreateEmployee(EmployeeCreateInput input)
+    public async Task<ActionResult<Employee>> CreateEmployee(EmployeeCreateInput input)
     {
         var employee = await _service.CreateEmployee(input);
 
@@ -35,11 +35,11 @@ public abstract class EmployeesControllerBase : ControllerBase
     /// </summary>
     [HttpDelete("{Id}")]
     [Authorize(Roles = "user")]
-    public async Task<ActionResult> DeleteEmployee([FromRoute()] EmployeeIdDto idDto)
+    public async Task<ActionResult> DeleteEmployee([FromRoute()] EmployeeWhereUniqueInput uniqueId)
     {
         try
         {
-            await _service.DeleteEmployee(idDto);
+            await _service.DeleteEmployee(uniqueId);
         }
         catch (NotFoundException)
         {
@@ -55,13 +55,13 @@ public abstract class EmployeesControllerBase : ControllerBase
     [HttpPost("{Id}/sales")]
     [Authorize(Roles = "user")]
     public async Task<ActionResult> ConnectSales(
-        [FromRoute()] EmployeeIdDto idDto,
-        [FromQuery()] SaleIdDto[] salesId
+        [FromRoute()] EmployeeWhereUniqueInput uniqueId,
+        [FromQuery()] SaleWhereUniqueInput[] salesId
     )
     {
         try
         {
-            await _service.ConnectSales(idDto, salesId);
+            await _service.ConnectSales(uniqueId, salesId);
         }
         catch (NotFoundException)
         {
@@ -77,13 +77,13 @@ public abstract class EmployeesControllerBase : ControllerBase
     [HttpDelete("{Id}/sales")]
     [Authorize(Roles = "user")]
     public async Task<ActionResult> DisconnectSales(
-        [FromRoute()] EmployeeIdDto idDto,
-        [FromBody()] SaleIdDto[] salesId
+        [FromRoute()] EmployeeWhereUniqueInput uniqueId,
+        [FromBody()] SaleWhereUniqueInput[] salesId
     )
     {
         try
         {
-            await _service.DisconnectSales(idDto, salesId);
+            await _service.DisconnectSales(uniqueId, salesId);
         }
         catch (NotFoundException)
         {
@@ -98,14 +98,14 @@ public abstract class EmployeesControllerBase : ControllerBase
     /// </summary>
     [HttpGet("{Id}/sales")]
     [Authorize(Roles = "user")]
-    public async Task<ActionResult<List<SaleDto>>> FindSales(
-        [FromRoute()] EmployeeIdDto idDto,
-        [FromQuery()] SaleFindMany filter
+    public async Task<ActionResult<List<Sale>>> FindSales(
+        [FromRoute()] EmployeeWhereUniqueInput uniqueId,
+        [FromQuery()] SaleFindManyArgs filter
     )
     {
         try
         {
-            return Ok(await _service.FindSales(idDto, filter));
+            return Ok(await _service.FindSales(uniqueId, filter));
         }
         catch (NotFoundException)
         {
@@ -118,7 +118,7 @@ public abstract class EmployeesControllerBase : ControllerBase
     /// </summary>
     [HttpPost("meta")]
     public async Task<ActionResult<MetadataDto>> EmployeesMeta(
-        [FromQuery()] EmployeeFindMany filter
+        [FromQuery()] EmployeeFindManyArgs filter
     )
     {
         return Ok(await _service.EmployeesMeta(filter));
@@ -130,13 +130,13 @@ public abstract class EmployeesControllerBase : ControllerBase
     [HttpPatch("{Id}/sales")]
     [Authorize(Roles = "user")]
     public async Task<ActionResult> UpdateSales(
-        [FromRoute()] EmployeeIdDto idDto,
-        [FromBody()] SaleIdDto[] salesId
+        [FromRoute()] EmployeeWhereUniqueInput uniqueId,
+        [FromBody()] SaleWhereUniqueInput[] salesId
     )
     {
         try
         {
-            await _service.UpdateSales(idDto, salesId);
+            await _service.UpdateSales(uniqueId, salesId);
         }
         catch (NotFoundException)
         {
@@ -151,8 +151,8 @@ public abstract class EmployeesControllerBase : ControllerBase
     /// </summary>
     [HttpGet()]
     [Authorize(Roles = "user")]
-    public async Task<ActionResult<List<EmployeeDto>>> Employees(
-        [FromQuery()] EmployeeFindMany filter
+    public async Task<ActionResult<List<Employee>>> Employees(
+        [FromQuery()] EmployeeFindManyArgs filter
     )
     {
         return Ok(await _service.Employees(filter));
@@ -163,11 +163,13 @@ public abstract class EmployeesControllerBase : ControllerBase
     /// </summary>
     [HttpGet("{Id}")]
     [Authorize(Roles = "user")]
-    public async Task<ActionResult<EmployeeDto>> Employee([FromRoute()] EmployeeIdDto idDto)
+    public async Task<ActionResult<Employee>> Employee(
+        [FromRoute()] EmployeeWhereUniqueInput uniqueId
+    )
     {
         try
         {
-            return await _service.Employee(idDto);
+            return await _service.Employee(uniqueId);
         }
         catch (NotFoundException)
         {
@@ -181,13 +183,13 @@ public abstract class EmployeesControllerBase : ControllerBase
     [HttpPatch("{Id}")]
     [Authorize(Roles = "user")]
     public async Task<ActionResult> UpdateEmployee(
-        [FromRoute()] EmployeeIdDto idDto,
+        [FromRoute()] EmployeeWhereUniqueInput uniqueId,
         [FromQuery()] EmployeeUpdateInput employeeUpdateDto
     )
     {
         try
         {
-            await _service.UpdateEmployee(idDto, employeeUpdateDto);
+            await _service.UpdateEmployee(uniqueId, employeeUpdateDto);
         }
         catch (NotFoundException)
         {

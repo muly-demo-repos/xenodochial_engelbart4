@@ -5,26 +5,26 @@ namespace Aaa.APIs.Extensions;
 
 public static class SalesExtensions
 {
-    public static SaleDto ToDto(this Sale model)
+    public static Sale ToDto(this SaleDbModel model)
     {
-        return new SaleDto
+        return new Sale
         {
             Id = model.Id,
             CreatedAt = model.CreatedAt,
             UpdatedAt = model.UpdatedAt,
             SaleDate = model.SaleDate,
             TotalAmount = model.TotalAmount,
-            Customer = new CustomerIdDto { Id = model.CustomerId },
-            Car = new CarIdDto { Id = model.CarId },
-            Employee = new EmployeeIdDto { Id = model.EmployeeId },
+            Customer = model.CustomerId,
+            Car = model.CarId,
+            Employee = model.EmployeeId,
         };
     }
 
-    public static Sale ToModel(this SaleUpdateInput updateDto, SaleIdDto idDto)
+    public static SaleDbModel ToModel(this SaleUpdateInput updateDto, SaleWhereUniqueInput uniqueId)
     {
-        var sale = new Sale
+        var sale = new SaleDbModel
         {
-            Id = idDto.Id,
+            Id = uniqueId.Id,
             SaleDate = updateDto.SaleDate,
             TotalAmount = updateDto.TotalAmount
         };

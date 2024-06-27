@@ -5,4 +5,4 @@ using Microsoft.AspNetCore.Mvc;
 namespace Aaa.APIs.Dtos;
 
 [BindProperties(SupportsGet = true)]
-public class CarFindMany : FindManyInput<Car, CarWhereInput> { }
+public class CustomerFindManyArgs : FindManyInput<Customer, CustomerWhereInput> { }

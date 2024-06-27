@@ -10,13 +10,13 @@ public class AaaDbContext : IdentityDbContext<IdentityUser>
     public AaaDbContext(DbContextOptions<AaaDbContext> options)
         : base(options) { }
 
-    public DbSet<Car> Cars { get; set; }
+    public DbSet<CarDbModel> Cars { get; set; }
 
-    public DbSet<Inventory> Inventories { get; set; }
+    public DbSet<InventoryDbModel> Inventories { get; set; }
 
-    public DbSet<Customer> Customers { get; set; }
+    public DbSet<CustomerDbModel> Customers { get; set; }
 
-    public DbSet<Employee> Employees { get; set; }
+    public DbSet<EmployeeDbModel> Employees { get; set; }
 
-    public DbSet<Sale> Sales { get; set; }
+    public DbSet<SaleDbModel> Sales { get; set; }
 }

@@ -1,7 +1,9 @@
 namespace Aaa.APIs.Dtos;
 
-public class CarDto : CarIdDto
+public class Car
 {
+    public string Id { get; set; }
+
     public DateTime CreatedAt { get; set; }
 
     public DateTime UpdatedAt { get; set; }
@@ -14,5 +16,5 @@ public class CarDto : CarIdDto
 
     public double? Price { get; set; }
 
-    public List<SaleIdDto>? Sales { get; set; }
+    public List<string>? Sales { get; set; }
 }

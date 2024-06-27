@@ -21,11 +21,11 @@ public abstract class CarsServiceBase : ICarsService
     /// <summary>
     /// Connect multiple Sales records to Car
     /// </summary>
-    public async Task ConnectSales(CarIdDto idDto, SaleIdDto[] salesId)
+    public async Task ConnectSales(CarWhereUniqueInput uniqueId, SaleWhereUniqueInput[] salesId)
     {
         var car = await _context
             .Cars.Include(x => x.Sales)
-            .FirstOrDefaultAsync(x => x.Id == idDto.Id);
+            .FirstOrDefaultAsync(x => x.Id == uniqueId.Id);
         if (car == null)
         {
             throw new NotFoundException();
@@ -52,11 +52,11 @@ public abstract class CarsServiceBase : ICarsService
     /// <summary>
     /// Disconnect multiple Sales records from Car
     /// </summary>
-    public async Task DisconnectSales(CarIdDto idDto, SaleIdDto[] salesId)
+    public async Task DisconnectSales(CarWhereUniqueInput uniqueId, SaleWhereUniqueInput[] salesId)
     {
         var car = await _context
             .Cars.Include(x => x.Sales)
-            .FirstOrDefaultAsync(x => x.Id == idDto.Id);
+            .FirstOrDefaultAsync(x => x.Id == uniqueId.Id);
         if (car == null)
         {
             throw new NotFoundException();
@@ -76,14 +76,17 @@ public abstract class CarsServiceBase : ICarsService
     /// <summary>
     /// Find multiple Sales records for Car
     /// </summary>
-    public async Task<List<SaleDto>> FindSales(CarIdDto idDto, SaleFindMany carFindMany)
+    public async Task<List<Sale>> FindSales(
+        CarWhereUniqueInput uniqueId,
+        SaleFindManyArgs carFindManyArgs
+    )
     {
         var sales = await _context
-            .Sales.Where(m => m.CarId == idDto.Id)
-            .ApplyWhere(carFindMany.Where)
-            .ApplySkip(carFindMany.Skip)
-            .ApplyTake(carFindMany.Take)
-            .ApplyOrderBy(carFindMany.SortBy)
+            .Sales.Where(m => m.CarId == uniqueId.Id)
+            .ApplyWhere(carFindManyArgs.Where)
+            .ApplySkip(carFindManyArgs.Skip)
+            .ApplyTake(carFindManyArgs.Take)
+            .ApplyOrderBy(carFindManyArgs.SortBy)
             .ToListAsync();
 
         return sales.Select(x => x.ToDto()).ToList();
@@ -92,7 +95,7 @@ public abstract class CarsServiceBase : ICarsService
     /// <summary>
     /// Meta data about Car records
     /// </summary>
-    public async Task<MetadataDto> CarsMeta(CarFindMany findManyArgs)
+    public async Task<MetadataDto> CarsMeta(CarFindManyArgs findManyArgs)
     {
         var count = await _context.Cars.ApplyWhere(findManyArgs.Where).CountAsync();
 
@@ -102,11 +105,11 @@ public abstract class CarsServiceBase : ICarsService
     /// <summary>
     /// Update multiple Sales records for Car
     /// </summary>
-    public async Task UpdateSales(CarIdDto idDto, SaleIdDto[] salesId)
+    public async Task UpdateSales(CarWhereUniqueInput uniqueId, SaleWhereUniqueInput[] salesId)
     {
         var car = await _context
             .Cars.Include(t => t.Sales)
-            .FirstOrDefaultAsync(x => x.Id == idDto.Id);
+            .FirstOrDefaultAsync(x => x.Id == uniqueId.Id);
         if (car == null)
         {
             throw new NotFoundException();
@@ -128,9 +131,9 @@ public abstract class CarsServiceBase : ICarsService
     /// <summary>
     /// Create one Car
     /// </summary>
-    public async Task<CarDto> CreateCar(CarCreateInput createDto)
+    public async Task<Car> CreateCar(CarCreateInput createDto)
     {
-        var car = new Car
+        var car = new CarDbModel
         {
             CreatedAt = createDto.CreatedAt,
             UpdatedAt = createDto.UpdatedAt,
@@ -154,7 +157,7 @@ public abstract class CarsServiceBase : ICarsService
         _context.Cars.Add(car);
         await _context.SaveChangesAsync();
 
-        var result = await _context.FindAsync<Car>(car.Id);
+        var result = await _context.FindAsync<CarDbModel>(car.Id);
 
         if (result == null)
         {
@@ -167,9 +170,9 @@ public abstract class CarsServiceBase : ICarsService
     /// <summary>
     /// Delete one Car
     /// </summary>
-    public async Task DeleteCar(CarIdDto idDto)
+    public async Task DeleteCar(CarWhereUniqueInput uniqueId)
     {
-        var car = await _context.Cars.FindAsync(idDto.Id);
+        var car = await _context.Cars.FindAsync(uniqueId.Id);
         if (car == null)
         {
             throw new NotFoundException();
@@ -182,7 +185,7 @@ public abstract class CarsServiceBase : ICarsService
     /// <summary>
     /// Find many Cars
     /// </summary>
-    public async Task<List<CarDto>> Cars(CarFindMany findManyArgs)
+    public async Task<List<Car>> Cars(CarFindManyArgs findManyArgs)
     {
         var cars = await _context
             .Cars.Include(x => x.Sales)
@@ -197,9 +200,11 @@ public abstract class CarsServiceBase : ICarsService
     /// <summary>
     /// Get one Car
     /// </summary>
-    public async Task<CarDto> Car(CarIdDto idDto)
+    public async Task<Car> Car(CarWhereUniqueInput uniqueId)
     {
-        var cars = await this.Cars(new CarFindMany { Where = new CarWhereInput { Id = idDto.Id } });
+        var cars = await this.Cars(
+            new CarFindManyArgs { Where = new CarWhereInput { Id = uniqueId.Id } }
+        );
         var car = cars.FirstOrDefault();
         if (car == null)
         {
@@ -212,14 +217,14 @@ public abstract class CarsServiceBase : ICarsService
     /// <summary>
     /// Update one Car
     /// </summary>
-    public async Task UpdateCar(CarIdDto idDto, CarUpdateInput updateDto)
+    public async Task UpdateCar(CarWhereUniqueInput uniqueId, CarUpdateInput updateDto)
     {
-        var car = updateDto.ToModel(idDto);
+        var car = updateDto.ToModel(uniqueId);
 
         if (updateDto.Sales != null)
         {
             car.Sales = await _context
-                .Sales.Where(sale => updateDto.Sales.Select(t => t.Id).Contains(sale.Id))
+                .Sales.Where(sale => updateDto.Sales.Select(t => t).Contains(sale.Id))
                 .ToListAsync();
         }
 

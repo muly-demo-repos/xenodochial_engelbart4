@@ -5,4 +5,4 @@ using Microsoft.AspNetCore.Mvc;
 namespace Aaa.APIs.Dtos;
 
 [BindProperties(SupportsGet = true)]
-public class InventoryFindMany : FindManyInput<Inventory, InventoryWhereInput> { }
+public class SaleFindManyArgs : FindManyInput<Sale, SaleWhereInput> { }

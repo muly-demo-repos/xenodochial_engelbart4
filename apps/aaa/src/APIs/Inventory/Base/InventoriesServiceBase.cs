@@ -21,9 +21,9 @@ public abstract class InventoriesServiceBase : IInventoriesService
     /// <summary>
     /// Create one Inventory
     /// </summary>
-    public async Task<InventoryDto> CreateInventory(InventoryCreateInput createDto)
+    public async Task<Inventory> CreateInventory(InventoryCreateInput createDto)
     {
-        var inventory = new Inventory
+        var inventory = new InventoryDbModel
         {
             CreatedAt = createDto.CreatedAt,
             UpdatedAt = createDto.UpdatedAt,
@@ -39,7 +39,7 @@ public abstract class InventoriesServiceBase : IInventoriesService
         _context.Inventories.Add(inventory);
         await _context.SaveChangesAsync();
 
-        var result = await _context.FindAsync<Inventory>(inventory.Id);
+        var result = await _context.FindAsync<InventoryDbModel>(inventory.Id);
 
         if (result == null)
         {
@@ -52,9 +52,9 @@ public abstract class InventoriesServiceBase : IInventoriesService
     /// <summary>
     /// Delete one Inventory
     /// </summary>
-    public async Task DeleteInventory(InventoryIdDto idDto)
+    public async Task DeleteInventory(InventoryWhereUniqueInput uniqueId)
     {
-        var inventory = await _context.Inventories.FindAsync(idDto.Id);
+        var inventory = await _context.Inventories.FindAsync(uniqueId.Id);
         if (inventory == null)
         {
             throw new NotFoundException();
@@ -67,7 +67,7 @@ public abstract class InventoriesServiceBase : IInventoriesService
     /// <summary>
     /// Find many Inventories
     /// </summary>
-    public async Task<List<InventoryDto>> Inventories(InventoryFindMany findManyArgs)
+    public async Task<List<Inventory>> Inventories(InventoryFindManyArgs findManyArgs)
     {
         var inventories = await _context
             .Inventories.ApplyWhere(findManyArgs.Where)
@@ -81,10 +81,10 @@ public abstract class InventoriesServiceBase : IInventoriesService
     /// <summary>
     /// Get one Inventory
     /// </summary>
-    public async Task<InventoryDto> Inventory(InventoryIdDto idDto)
+    public async Task<Inventory> Inventory(InventoryWhereUniqueInput uniqueId)
     {
         var inventories = await this.Inventories(
-            new InventoryFindMany { Where = new InventoryWhereInput { Id = idDto.Id } }
+            new InventoryFindManyArgs { Where = new InventoryWhereInput { Id = uniqueId.Id } }
         );
         var inventory = inventories.FirstOrDefault();
         if (inventory == null)
@@ -98,7 +98,7 @@ public abstract class InventoriesServiceBase : IInventoriesService
     /// <summary>
     /// Meta data about Inventory records
     /// </summary>
-    public async Task<MetadataDto> InventoriesMeta(InventoryFindMany findManyArgs)
+    public async Task<MetadataDto> InventoriesMeta(InventoryFindManyArgs findManyArgs)
     {
         var count = await _context.Inventories.ApplyWhere(findManyArgs.Where).CountAsync();
 
@@ -108,9 +108,12 @@ public abstract class InventoriesServiceBase : IInventoriesService
     /// <summary>
     /// Update one Inventory
     /// </summary>
-    public async Task UpdateInventory(InventoryIdDto idDto, InventoryUpdateInput updateDto)
+    public async Task UpdateInventory(
+        InventoryWhereUniqueInput uniqueId,
+        InventoryUpdateInput updateDto
+    )
     {
-        var inventory = updateDto.ToModel(idDto);
+        var inventory = updateDto.ToModel(uniqueId);
 
         _context.Entry(inventory).State = EntityState.Modified;
 

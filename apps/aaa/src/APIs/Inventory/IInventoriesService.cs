@@ -8,30 +8,30 @@ public interface IInventoriesService
     /// <summary>
     /// Create one Inventory
     /// </summary>
-    public Task<InventoryDto> CreateInventory(InventoryCreateInput inventoryDto);
+    public Task<Inventory> CreateInventory(InventoryCreateInput inventory);
 
     /// <summary>
     /// Delete one Inventory
     /// </summary>
-    public Task DeleteInventory(InventoryIdDto idDto);
+    public Task DeleteInventory(InventoryWhereUniqueInput uniqueId);
 
     /// <summary>
     /// Find many Inventories
     /// </summary>
-    public Task<List<InventoryDto>> Inventories(InventoryFindMany findManyArgs);
+    public Task<List<Inventory>> Inventories(InventoryFindManyArgs findManyArgs);
 
     /// <summary>
     /// Get one Inventory
     /// </summary>
-    public Task<InventoryDto> Inventory(InventoryIdDto idDto);
+    public Task<Inventory> Inventory(InventoryWhereUniqueInput uniqueId);
 
     /// <summary>
     /// Meta data about Inventory records
     /// </summary>
-    public Task<MetadataDto> InventoriesMeta(InventoryFindMany findManyArgs);
+    public Task<MetadataDto> InventoriesMeta(InventoryFindManyArgs findManyArgs);
 
     /// <summary>
     /// Update one Inventory
     /// </summary>
-    public Task UpdateInventory(InventoryIdDto idDto, InventoryUpdateInput updateDto);
+    public Task UpdateInventory(InventoryWhereUniqueInput uniqueId, InventoryUpdateInput updateDto);
 }
