@@ -14,5 +14,6 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IEmployeesService, EmployeesService>();
         services.AddScoped<IInventoriesService, InventoriesService>();
         services.AddScoped<ISalesService, SalesService>();
+        services.AddScoped<IUsersService, UsersService>();
     }
 }

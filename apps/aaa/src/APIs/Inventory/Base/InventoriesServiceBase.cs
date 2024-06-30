@@ -105,6 +105,11 @@ public abstract class InventoriesServiceBase : IInventoriesService
         return new MetadataDto { Count = count };
     }
 
+    public async Task<string> InventoryCheckup(string data)
+    {
+        throw new NotImplementedException();
+    }
+
     /// <summary>
     /// Update one Inventory
     /// </summary>

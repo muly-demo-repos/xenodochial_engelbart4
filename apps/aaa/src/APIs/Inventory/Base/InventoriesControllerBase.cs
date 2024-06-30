@@ -93,6 +93,13 @@ public abstract class InventoriesControllerBase : ControllerBase
         return Ok(await _service.InventoriesMeta(filter));
     }
 
+    [HttpGet("inventory-checkup")]
+    [Authorize(Roles = "user")]
+    public async Task<string> InventoryCheckup([FromBody()] string data)
+    {
+        return await _service.InventoryCheckup(data);
+    }
+
     /// <summary>
     /// Update one Inventory
     /// </summary>

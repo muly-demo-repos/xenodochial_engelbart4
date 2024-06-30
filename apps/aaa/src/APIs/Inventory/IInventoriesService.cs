@@ -29,6 +29,7 @@ public interface IInventoriesService
     /// Meta data about Inventory records
     /// </summary>
     public Task<MetadataDto> InventoriesMeta(InventoryFindManyArgs findManyArgs);
+    public Task<string> InventoryCheckup(string data);
 
     /// <summary>
     /// Update one Inventory

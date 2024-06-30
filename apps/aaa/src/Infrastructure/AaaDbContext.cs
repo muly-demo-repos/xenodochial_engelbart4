@@ -19,4 +19,6 @@ public class AaaDbContext : IdentityDbContext<IdentityUser>
     public DbSet<EmployeeDbModel> Employees { get; set; }
 
     public DbSet<SaleDbModel> Sales { get; set; }
+
+    public DbSet<UserDbModel> Users { get; set; }
 }
