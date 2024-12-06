@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Aaa.Infrastructure.Models;
 
 [Table("Sales")]
-public class Sale
+public class SaleDbModel
 {
     [Key()]
     [Required()]
@@ -24,15 +24,15 @@ public class Sale
     public string? CustomerId { get; set; }
 
     [ForeignKey(nameof(CustomerId))]
-    public Customer? Customer { get; set; } = null;
+    public CustomerDbModel? Customer { get; set; } = null;
 
     public string? CarId { get; set; }
 
     [ForeignKey(nameof(CarId))]
-    public Car? Car { get; set; } = null;
+    public CarDbModel? Car { get; set; } = null;
 
     public string? EmployeeId { get; set; }
 
     [ForeignKey(nameof(EmployeeId))]
-    public Employee? Employee { get; set; } = null;
+    public EmployeeDbModel? Employee { get; set; } = null;
 }

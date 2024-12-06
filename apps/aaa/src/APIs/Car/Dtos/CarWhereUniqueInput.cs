@@ -1,6 +1,6 @@
 namespace Aaa.APIs.Dtos;
 
-public class InventoryIdDto
+public class CarWhereUniqueInput
 {
     public string Id { get; set; }
 }

@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Aaa.Infrastructure.Models;
 
 [Table("Customers")]
-public class Customer
+public class CustomerDbModel
 {
     [Key()]
     [Required()]
@@ -27,5 +27,5 @@ public class Customer
     [StringLength(1000)]
     public string? Address { get; set; }
 
-    public List<Sale>? Sales { get; set; } = new List<Sale>();
+    public List<SaleDbModel>? Sales { get; set; } = new List<SaleDbModel>();
 }

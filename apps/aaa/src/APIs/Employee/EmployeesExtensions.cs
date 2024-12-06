@@ -5,9 +5,9 @@ namespace Aaa.APIs.Extensions;
 
 public static class EmployeesExtensions
 {
-    public static EmployeeDto ToDto(this Employee model)
+    public static Employee ToDto(this EmployeeDbModel model)
     {
-        return new EmployeeDto
+        return new Employee
         {
             Id = model.Id,
             CreatedAt = model.CreatedAt,
@@ -16,15 +16,18 @@ public static class EmployeesExtensions
             LastName = model.LastName,
             Position = model.Position,
             Salary = model.Salary,
-            Sales = model.Sales?.Select(x => new SaleIdDto { Id = x.Id }).ToList(),
+            Sales = model.Sales?.Select(x => x.Id).ToList(),
         };
     }
 
-    public static Employee ToModel(this EmployeeUpdateInput updateDto, EmployeeIdDto idDto)
+    public static EmployeeDbModel ToModel(
+        this EmployeeUpdateInput updateDto,
+        EmployeeWhereUniqueInput uniqueId
+    )
     {
-        var employee = new Employee
+        var employee = new EmployeeDbModel
         {
-            Id = idDto.Id,
+            Id = uniqueId.Id,
             FirstName = updateDto.FirstName,
             LastName = updateDto.LastName,
             Position = updateDto.Position,

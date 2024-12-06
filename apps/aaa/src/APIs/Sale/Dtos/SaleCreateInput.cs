@@ -12,9 +12,9 @@ public class SaleCreateInput
 
     public double? TotalAmount { get; set; }
 
-    public CustomerIdDto? Customer { get; set; }
+    public Customer? Customer { get; set; }
 
-    public CarIdDto? Car { get; set; }
+    public Car? Car { get; set; }
 
-    public EmployeeIdDto? Employee { get; set; }
+    public Employee? Employee { get; set; }
 }

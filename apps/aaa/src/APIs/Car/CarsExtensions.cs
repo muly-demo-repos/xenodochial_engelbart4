@@ -5,9 +5,9 @@ namespace Aaa.APIs.Extensions;
 
 public static class CarsExtensions
 {
-    public static CarDto ToDto(this Car model)
+    public static Car ToDto(this CarDbModel model)
     {
-        return new CarDto
+        return new Car
         {
             Id = model.Id,
             CreatedAt = model.CreatedAt,
@@ -16,15 +16,15 @@ public static class CarsExtensions
             Model = model.Model,
             Year = model.Year,
             Price = model.Price,
-            Sales = model.Sales?.Select(x => new SaleIdDto { Id = x.Id }).ToList(),
+            Sales = model.Sales?.Select(x => x.Id).ToList(),
         };
     }
 
-    public static Car ToModel(this CarUpdateInput updateDto, CarIdDto idDto)
+    public static CarDbModel ToModel(this CarUpdateInput updateDto, CarWhereUniqueInput uniqueId)
     {
-        var car = new Car
+        var car = new CarDbModel
         {
-            Id = idDto.Id,
+            Id = uniqueId.Id,
             Make = updateDto.Make,
             Model = updateDto.Model,
             Year = updateDto.Year,

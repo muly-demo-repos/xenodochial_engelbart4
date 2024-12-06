@@ -21,9 +21,9 @@ public abstract class EmployeesServiceBase : IEmployeesService
     /// <summary>
     /// Create one Employee
     /// </summary>
-    public async Task<EmployeeDto> CreateEmployee(EmployeeCreateInput createDto)
+    public async Task<Employee> CreateEmployee(EmployeeCreateInput createDto)
     {
-        var employee = new Employee
+        var employee = new EmployeeDbModel
         {
             CreatedAt = createDto.CreatedAt,
             UpdatedAt = createDto.UpdatedAt,
@@ -47,7 +47,7 @@ public abstract class EmployeesServiceBase : IEmployeesService
         _context.Employees.Add(employee);
         await _context.SaveChangesAsync();
 
-        var result = await _context.FindAsync<Employee>(employee.Id);
+        var result = await _context.FindAsync<EmployeeDbModel>(employee.Id);
 
         if (result == null)
         {
@@ -60,9 +60,9 @@ public abstract class EmployeesServiceBase : IEmployeesService
     /// <summary>
     /// Delete one Employee
     /// </summary>
-    public async Task DeleteEmployee(EmployeeIdDto idDto)
+    public async Task DeleteEmployee(EmployeeWhereUniqueInput uniqueId)
     {
-        var employee = await _context.Employees.FindAsync(idDto.Id);
+        var employee = await _context.Employees.FindAsync(uniqueId.Id);
         if (employee == null)
         {
             throw new NotFoundException();
@@ -75,11 +75,14 @@ public abstract class EmployeesServiceBase : IEmployeesService
     /// <summary>
     /// Connect multiple Sales records to Employee
     /// </summary>
-    public async Task ConnectSales(EmployeeIdDto idDto, SaleIdDto[] salesId)
+    public async Task ConnectSales(
+        EmployeeWhereUniqueInput uniqueId,
+        SaleWhereUniqueInput[] salesId
+    )
     {
         var employee = await _context
             .Employees.Include(x => x.Sales)
-            .FirstOrDefaultAsync(x => x.Id == idDto.Id);
+            .FirstOrDefaultAsync(x => x.Id == uniqueId.Id);
         if (employee == null)
         {
             throw new NotFoundException();
@@ -106,11 +109,14 @@ public abstract class EmployeesServiceBase : IEmployeesService
     /// <summary>
     /// Disconnect multiple Sales records from Employee
     /// </summary>
-    public async Task DisconnectSales(EmployeeIdDto idDto, SaleIdDto[] salesId)
+    public async Task DisconnectSales(
+        EmployeeWhereUniqueInput uniqueId,
+        SaleWhereUniqueInput[] salesId
+    )
     {
         var employee = await _context
             .Employees.Include(x => x.Sales)
-            .FirstOrDefaultAsync(x => x.Id == idDto.Id);
+            .FirstOrDefaultAsync(x => x.Id == uniqueId.Id);
         if (employee == null)
         {
             throw new NotFoundException();
@@ -130,14 +136,17 @@ public abstract class EmployeesServiceBase : IEmployeesService
     /// <summary>
     /// Find multiple Sales records for Employee
     /// </summary>
-    public async Task<List<SaleDto>> FindSales(EmployeeIdDto idDto, SaleFindMany employeeFindMany)
+    public async Task<List<Sale>> FindSales(
+        EmployeeWhereUniqueInput uniqueId,
+        SaleFindManyArgs employeeFindManyArgs
+    )
     {
         var sales = await _context
-            .Sales.Where(m => m.EmployeeId == idDto.Id)
-            .ApplyWhere(employeeFindMany.Where)
-            .ApplySkip(employeeFindMany.Skip)
-            .ApplyTake(employeeFindMany.Take)
-            .ApplyOrderBy(employeeFindMany.SortBy)
+            .Sales.Where(m => m.EmployeeId == uniqueId.Id)
+            .ApplyWhere(employeeFindManyArgs.Where)
+            .ApplySkip(employeeFindManyArgs.Skip)
+            .ApplyTake(employeeFindManyArgs.Take)
+            .ApplyOrderBy(employeeFindManyArgs.SortBy)
             .ToListAsync();
 
         return sales.Select(x => x.ToDto()).ToList();
@@ -146,7 +155,7 @@ public abstract class EmployeesServiceBase : IEmployeesService
     /// <summary>
     /// Meta data about Employee records
     /// </summary>
-    public async Task<MetadataDto> EmployeesMeta(EmployeeFindMany findManyArgs)
+    public async Task<MetadataDto> EmployeesMeta(EmployeeFindManyArgs findManyArgs)
     {
         var count = await _context.Employees.ApplyWhere(findManyArgs.Where).CountAsync();
 
@@ -156,11 +165,11 @@ public abstract class EmployeesServiceBase : IEmployeesService
     /// <summary>
     /// Update multiple Sales records for Employee
     /// </summary>
-    public async Task UpdateSales(EmployeeIdDto idDto, SaleIdDto[] salesId)
+    public async Task UpdateSales(EmployeeWhereUniqueInput uniqueId, SaleWhereUniqueInput[] salesId)
     {
         var employee = await _context
             .Employees.Include(t => t.Sales)
-            .FirstOrDefaultAsync(x => x.Id == idDto.Id);
+            .FirstOrDefaultAsync(x => x.Id == uniqueId.Id);
         if (employee == null)
         {
             throw new NotFoundException();
@@ -182,7 +191,7 @@ public abstract class EmployeesServiceBase : IEmployeesService
     /// <summary>
     /// Find many Employees
     /// </summary>
-    public async Task<List<EmployeeDto>> Employees(EmployeeFindMany findManyArgs)
+    public async Task<List<Employee>> Employees(EmployeeFindManyArgs findManyArgs)
     {
         var employees = await _context
             .Employees.Include(x => x.Sales)
@@ -197,10 +206,10 @@ public abstract class EmployeesServiceBase : IEmployeesService
     /// <summary>
     /// Get one Employee
     /// </summary>
-    public async Task<EmployeeDto> Employee(EmployeeIdDto idDto)
+    public async Task<Employee> Employee(EmployeeWhereUniqueInput uniqueId)
     {
         var employees = await this.Employees(
-            new EmployeeFindMany { Where = new EmployeeWhereInput { Id = idDto.Id } }
+            new EmployeeFindManyArgs { Where = new EmployeeWhereInput { Id = uniqueId.Id } }
         );
         var employee = employees.FirstOrDefault();
         if (employee == null)
@@ -214,14 +223,17 @@ public abstract class EmployeesServiceBase : IEmployeesService
     /// <summary>
     /// Update one Employee
     /// </summary>
-    public async Task UpdateEmployee(EmployeeIdDto idDto, EmployeeUpdateInput updateDto)
+    public async Task UpdateEmployee(
+        EmployeeWhereUniqueInput uniqueId,
+        EmployeeUpdateInput updateDto
+    )
     {
-        var employee = updateDto.ToModel(idDto);
+        var employee = updateDto.ToModel(uniqueId);
 
         if (updateDto.Sales != null)
         {
             employee.Sales = await _context
-                .Sales.Where(sale => updateDto.Sales.Select(t => t.Id).Contains(sale.Id))
+                .Sales.Where(sale => updateDto.Sales.Select(t => t).Contains(sale.Id))
                 .ToListAsync();
         }
 

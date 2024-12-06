@@ -5,9 +5,9 @@ namespace Aaa.APIs.Extensions;
 
 public static class InventoriesExtensions
 {
-    public static InventoryDto ToDto(this Inventory model)
+    public static Inventory ToDto(this InventoryDbModel model)
     {
-        return new InventoryDto
+        return new Inventory
         {
             Id = model.Id,
             CreatedAt = model.CreatedAt,
@@ -17,11 +17,14 @@ public static class InventoriesExtensions
         };
     }
 
-    public static Inventory ToModel(this InventoryUpdateInput updateDto, InventoryIdDto idDto)
+    public static InventoryDbModel ToModel(
+        this InventoryUpdateInput updateDto,
+        InventoryWhereUniqueInput uniqueId
+    )
     {
-        var inventory = new Inventory
+        var inventory = new InventoryDbModel
         {
-            Id = idDto.Id,
+            Id = uniqueId.Id,
             Location = updateDto.Location,
             Quantity = updateDto.Quantity
         };

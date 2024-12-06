@@ -23,7 +23,7 @@ public abstract class SalesControllerBase : ControllerBase
     /// </summary>
     [HttpPost()]
     [Authorize(Roles = "user")]
-    public async Task<ActionResult<SaleDto>> CreateSale(SaleCreateInput input)
+    public async Task<ActionResult<Sale>> CreateSale(SaleCreateInput input)
     {
         var sale = await _service.CreateSale(input);
 
@@ -35,11 +35,11 @@ public abstract class SalesControllerBase : ControllerBase
     /// </summary>
     [HttpDelete("{Id}")]
     [Authorize(Roles = "user")]
-    public async Task<ActionResult> DeleteSale([FromRoute()] SaleIdDto idDto)
+    public async Task<ActionResult> DeleteSale([FromRoute()] SaleWhereUniqueInput uniqueId)
     {
         try
         {
-            await _service.DeleteSale(idDto);
+            await _service.DeleteSale(uniqueId);
         }
         catch (NotFoundException)
         {
@@ -54,7 +54,7 @@ public abstract class SalesControllerBase : ControllerBase
     /// </summary>
     [HttpGet()]
     [Authorize(Roles = "user")]
-    public async Task<ActionResult<List<SaleDto>>> Sales([FromQuery()] SaleFindMany filter)
+    public async Task<ActionResult<List<Sale>>> Sales([FromQuery()] SaleFindManyArgs filter)
     {
         return Ok(await _service.Sales(filter));
     }
@@ -64,11 +64,11 @@ public abstract class SalesControllerBase : ControllerBase
     /// </summary>
     [HttpGet("{Id}")]
     [Authorize(Roles = "user")]
-    public async Task<ActionResult<SaleDto>> Sale([FromRoute()] SaleIdDto idDto)
+    public async Task<ActionResult<Sale>> Sale([FromRoute()] SaleWhereUniqueInput uniqueId)
     {
         try
         {
-            return await _service.Sale(idDto);
+            return await _service.Sale(uniqueId);
         }
         catch (NotFoundException)
         {
@@ -80,9 +80,9 @@ public abstract class SalesControllerBase : ControllerBase
     /// Get a Car record for Sale
     /// </summary>
     [HttpGet("{Id}/cars")]
-    public async Task<ActionResult<List<CarDto>>> GetCar([FromRoute()] SaleIdDto idDto)
+    public async Task<ActionResult<List<Car>>> GetCar([FromRoute()] SaleWhereUniqueInput uniqueId)
     {
-        var car = await _service.GetCar(idDto);
+        var car = await _service.GetCar(uniqueId);
         return Ok(car);
     }
 
@@ -90,9 +90,11 @@ public abstract class SalesControllerBase : ControllerBase
     /// Get a Customer record for Sale
     /// </summary>
     [HttpGet("{Id}/customers")]
-    public async Task<ActionResult<List<CustomerDto>>> GetCustomer([FromRoute()] SaleIdDto idDto)
+    public async Task<ActionResult<List<Customer>>> GetCustomer(
+        [FromRoute()] SaleWhereUniqueInput uniqueId
+    )
     {
-        var customer = await _service.GetCustomer(idDto);
+        var customer = await _service.GetCustomer(uniqueId);
         return Ok(customer);
     }
 
@@ -100,9 +102,11 @@ public abstract class SalesControllerBase : ControllerBase
     /// Get a Employee record for Sale
     /// </summary>
     [HttpGet("{Id}/employees")]
-    public async Task<ActionResult<List<EmployeeDto>>> GetEmployee([FromRoute()] SaleIdDto idDto)
+    public async Task<ActionResult<List<Employee>>> GetEmployee(
+        [FromRoute()] SaleWhereUniqueInput uniqueId
+    )
     {
-        var employee = await _service.GetEmployee(idDto);
+        var employee = await _service.GetEmployee(uniqueId);
         return Ok(employee);
     }
 
@@ -110,7 +114,7 @@ public abstract class SalesControllerBase : ControllerBase
     /// Meta data about Sale records
     /// </summary>
     [HttpPost("meta")]
-    public async Task<ActionResult<MetadataDto>> SalesMeta([FromQuery()] SaleFindMany filter)
+    public async Task<ActionResult<MetadataDto>> SalesMeta([FromQuery()] SaleFindManyArgs filter)
     {
         return Ok(await _service.SalesMeta(filter));
     }
@@ -121,13 +125,13 @@ public abstract class SalesControllerBase : ControllerBase
     [HttpPatch("{Id}")]
     [Authorize(Roles = "user")]
     public async Task<ActionResult> UpdateSale(
-        [FromRoute()] SaleIdDto idDto,
+        [FromRoute()] SaleWhereUniqueInput uniqueId,
         [FromQuery()] SaleUpdateInput saleUpdateDto
     )
     {
         try
         {
-            await _service.UpdateSale(idDto, saleUpdateDto);
+            await _service.UpdateSale(uniqueId, saleUpdateDto);
         }
         catch (NotFoundException)
         {

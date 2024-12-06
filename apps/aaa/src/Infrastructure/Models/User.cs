@@ -3,8 +3,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Aaa.Infrastructure.Models;
 
-[Table("Employees")]
-public class EmployeeDbModel
+[Table("Users")]
+public class UserDbModel
 {
     [Key()]
     [Required()]
@@ -16,17 +16,20 @@ public class EmployeeDbModel
     [Required()]
     public DateTime UpdatedAt { get; set; }
 
-    [StringLength(1000)]
+    [StringLength(256)]
     public string? FirstName { get; set; }
 
-    [StringLength(1000)]
+    [StringLength(256)]
     public string? LastName { get; set; }
 
-    [StringLength(1000)]
-    public string? Position { get; set; }
+    [Required()]
+    public string Username { get; set; }
 
-    [Range(-999999999, 999999999)]
-    public double? Salary { get; set; }
+    public string? Email { get; set; }
 
-    public List<SaleDbModel>? Sales { get; set; } = new List<SaleDbModel>();
+    [Required()]
+    public string Password { get; set; }
+
+    [Required()]
+    public string Roles { get; set; }
 }

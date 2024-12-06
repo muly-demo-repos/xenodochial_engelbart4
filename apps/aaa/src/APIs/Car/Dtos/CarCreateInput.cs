@@ -16,5 +16,5 @@ public class CarCreateInput
 
     public double? Price { get; set; }
 
-    public List<SaleIdDto>? Sales { get; set; }
+    public List<Sale>? Sales { get; set; }
 }

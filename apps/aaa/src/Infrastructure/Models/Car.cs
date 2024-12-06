@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Aaa.Infrastructure.Models;
 
 [Table("Cars")]
-public class Car
+public class CarDbModel
 {
     [Key()]
     [Required()]
@@ -28,5 +28,5 @@ public class Car
     [Range(-999999999, 999999999)]
     public double? Price { get; set; }
 
-    public List<Sale>? Sales { get; set; } = new List<Sale>();
+    public List<SaleDbModel>? Sales { get; set; } = new List<SaleDbModel>();
 }

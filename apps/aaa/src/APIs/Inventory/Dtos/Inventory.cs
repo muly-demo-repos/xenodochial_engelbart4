@@ -1,7 +1,9 @@
 namespace Aaa.APIs.Dtos;
 
-public class InventoryDto : InventoryIdDto
+public class Inventory
 {
+    public string Id { get; set; }
+
     public DateTime CreatedAt { get; set; }
 
     public DateTime UpdatedAt { get; set; }

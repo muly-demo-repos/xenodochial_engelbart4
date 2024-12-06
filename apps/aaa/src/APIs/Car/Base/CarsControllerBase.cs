@@ -24,13 +24,13 @@ public abstract class CarsControllerBase : ControllerBase
     [HttpPost("{Id}/sales")]
     [Authorize(Roles = "user")]
     public async Task<ActionResult> ConnectSales(
-        [FromRoute()] CarIdDto idDto,
-        [FromQuery()] SaleIdDto[] salesId
+        [FromRoute()] CarWhereUniqueInput uniqueId,
+        [FromQuery()] SaleWhereUniqueInput[] salesId
     )
     {
         try
         {
-            await _service.ConnectSales(idDto, salesId);
+            await _service.ConnectSales(uniqueId, salesId);
         }
         catch (NotFoundException)
         {
@@ -46,13 +46,13 @@ public abstract class CarsControllerBase : ControllerBase
     [HttpDelete("{Id}/sales")]
     [Authorize(Roles = "user")]
     public async Task<ActionResult> DisconnectSales(
-        [FromRoute()] CarIdDto idDto,
-        [FromBody()] SaleIdDto[] salesId
+        [FromRoute()] CarWhereUniqueInput uniqueId,
+        [FromBody()] SaleWhereUniqueInput[] salesId
     )
     {
         try
         {
-            await _service.DisconnectSales(idDto, salesId);
+            await _service.DisconnectSales(uniqueId, salesId);
         }
         catch (NotFoundException)
         {
@@ -67,14 +67,14 @@ public abstract class CarsControllerBase : ControllerBase
     /// </summary>
     [HttpGet("{Id}/sales")]
     [Authorize(Roles = "user")]
-    public async Task<ActionResult<List<SaleDto>>> FindSales(
-        [FromRoute()] CarIdDto idDto,
-        [FromQuery()] SaleFindMany filter
+    public async Task<ActionResult<List<Sale>>> FindSales(
+        [FromRoute()] CarWhereUniqueInput uniqueId,
+        [FromQuery()] SaleFindManyArgs filter
     )
     {
         try
         {
-            return Ok(await _service.FindSales(idDto, filter));
+            return Ok(await _service.FindSales(uniqueId, filter));
         }
         catch (NotFoundException)
         {
@@ -86,7 +86,7 @@ public abstract class CarsControllerBase : ControllerBase
     /// Meta data about Car records
     /// </summary>
     [HttpPost("meta")]
-    public async Task<ActionResult<MetadataDto>> CarsMeta([FromQuery()] CarFindMany filter)
+    public async Task<ActionResult<MetadataDto>> CarsMeta([FromQuery()] CarFindManyArgs filter)
     {
         return Ok(await _service.CarsMeta(filter));
     }
@@ -97,13 +97,13 @@ public abstract class CarsControllerBase : ControllerBase
     [HttpPatch("{Id}/sales")]
     [Authorize(Roles = "user")]
     public async Task<ActionResult> UpdateSales(
-        [FromRoute()] CarIdDto idDto,
-        [FromBody()] SaleIdDto[] salesId
+        [FromRoute()] CarWhereUniqueInput uniqueId,
+        [FromBody()] SaleWhereUniqueInput[] salesId
     )
     {
         try
         {
-            await _service.UpdateSales(idDto, salesId);
+            await _service.UpdateSales(uniqueId, salesId);
         }
         catch (NotFoundException)
         {
@@ -118,7 +118,7 @@ public abstract class CarsControllerBase : ControllerBase
     /// </summary>
     [HttpPost()]
     [Authorize(Roles = "user")]
-    public async Task<ActionResult<CarDto>> CreateCar(CarCreateInput input)
+    public async Task<ActionResult<Car>> CreateCar(CarCreateInput input)
     {
         var car = await _service.CreateCar(input);
 
@@ -130,11 +130,11 @@ public abstract class CarsControllerBase : ControllerBase
     /// </summary>
     [HttpDelete("{Id}")]
     [Authorize(Roles = "user")]
-    public async Task<ActionResult> DeleteCar([FromRoute()] CarIdDto idDto)
+    public async Task<ActionResult> DeleteCar([FromRoute()] CarWhereUniqueInput uniqueId)
     {
         try
         {
-            await _service.DeleteCar(idDto);
+            await _service.DeleteCar(uniqueId);
         }
         catch (NotFoundException)
         {
@@ -149,7 +149,7 @@ public abstract class CarsControllerBase : ControllerBase
     /// </summary>
     [HttpGet()]
     [Authorize(Roles = "user")]
-    public async Task<ActionResult<List<CarDto>>> Cars([FromQuery()] CarFindMany filter)
+    public async Task<ActionResult<List<Car>>> Cars([FromQuery()] CarFindManyArgs filter)
     {
         return Ok(await _service.Cars(filter));
     }
@@ -159,11 +159,11 @@ public abstract class CarsControllerBase : ControllerBase
     /// </summary>
     [HttpGet("{Id}")]
     [Authorize(Roles = "user")]
-    public async Task<ActionResult<CarDto>> Car([FromRoute()] CarIdDto idDto)
+    public async Task<ActionResult<Car>> Car([FromRoute()] CarWhereUniqueInput uniqueId)
     {
         try
         {
-            return await _service.Car(idDto);
+            return await _service.Car(uniqueId);
         }
         catch (NotFoundException)
         {
@@ -177,13 +177,13 @@ public abstract class CarsControllerBase : ControllerBase
     [HttpPatch("{Id}")]
     [Authorize(Roles = "user")]
     public async Task<ActionResult> UpdateCar(
-        [FromRoute()] CarIdDto idDto,
+        [FromRoute()] CarWhereUniqueInput uniqueId,
         [FromQuery()] CarUpdateInput carUpdateDto
     )
     {
         try
         {
-            await _service.UpdateCar(idDto, carUpdateDto);
+            await _service.UpdateCar(uniqueId, carUpdateDto);
         }
         catch (NotFoundException)
         {

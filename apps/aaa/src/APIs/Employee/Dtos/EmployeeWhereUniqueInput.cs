@@ -1,6 +1,6 @@
 namespace Aaa.APIs.Dtos;
 
-public class EmployeeIdDto
+public class EmployeeWhereUniqueInput
 {
     public string Id { get; set; }
 }

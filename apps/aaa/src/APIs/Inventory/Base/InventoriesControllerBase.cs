@@ -23,7 +23,7 @@ public abstract class InventoriesControllerBase : ControllerBase
     /// </summary>
     [HttpPost()]
     [Authorize(Roles = "user")]
-    public async Task<ActionResult<InventoryDto>> CreateInventory(InventoryCreateInput input)
+    public async Task<ActionResult<Inventory>> CreateInventory(InventoryCreateInput input)
     {
         var inventory = await _service.CreateInventory(input);
 
@@ -35,11 +35,13 @@ public abstract class InventoriesControllerBase : ControllerBase
     /// </summary>
     [HttpDelete("{Id}")]
     [Authorize(Roles = "user")]
-    public async Task<ActionResult> DeleteInventory([FromRoute()] InventoryIdDto idDto)
+    public async Task<ActionResult> DeleteInventory(
+        [FromRoute()] InventoryWhereUniqueInput uniqueId
+    )
     {
         try
         {
-            await _service.DeleteInventory(idDto);
+            await _service.DeleteInventory(uniqueId);
         }
         catch (NotFoundException)
         {
@@ -54,8 +56,8 @@ public abstract class InventoriesControllerBase : ControllerBase
     /// </summary>
     [HttpGet()]
     [Authorize(Roles = "user")]
-    public async Task<ActionResult<List<InventoryDto>>> Inventories(
-        [FromQuery()] InventoryFindMany filter
+    public async Task<ActionResult<List<Inventory>>> Inventories(
+        [FromQuery()] InventoryFindManyArgs filter
     )
     {
         return Ok(await _service.Inventories(filter));
@@ -66,11 +68,13 @@ public abstract class InventoriesControllerBase : ControllerBase
     /// </summary>
     [HttpGet("{Id}")]
     [Authorize(Roles = "user")]
-    public async Task<ActionResult<InventoryDto>> Inventory([FromRoute()] InventoryIdDto idDto)
+    public async Task<ActionResult<Inventory>> Inventory(
+        [FromRoute()] InventoryWhereUniqueInput uniqueId
+    )
     {
         try
         {
-            return await _service.Inventory(idDto);
+            return await _service.Inventory(uniqueId);
         }
         catch (NotFoundException)
         {
@@ -83,10 +87,17 @@ public abstract class InventoriesControllerBase : ControllerBase
     /// </summary>
     [HttpPost("meta")]
     public async Task<ActionResult<MetadataDto>> InventoriesMeta(
-        [FromQuery()] InventoryFindMany filter
+        [FromQuery()] InventoryFindManyArgs filter
     )
     {
         return Ok(await _service.InventoriesMeta(filter));
+    }
+
+    [HttpGet("inventory-checkup")]
+    [Authorize(Roles = "user")]
+    public async Task<string> InventoryCheckup([FromBody()] string data)
+    {
+        return await _service.InventoryCheckup(data);
     }
 
     /// <summary>
@@ -95,13 +106,13 @@ public abstract class InventoriesControllerBase : ControllerBase
     [HttpPatch("{Id}")]
     [Authorize(Roles = "user")]
     public async Task<ActionResult> UpdateInventory(
-        [FromRoute()] InventoryIdDto idDto,
+        [FromRoute()] InventoryWhereUniqueInput uniqueId,
         [FromQuery()] InventoryUpdateInput inventoryUpdateDto
     )
     {
         try
         {
-            await _service.UpdateInventory(idDto, inventoryUpdateDto);
+            await _service.UpdateInventory(uniqueId, inventoryUpdateDto);
         }
         catch (NotFoundException)
         {

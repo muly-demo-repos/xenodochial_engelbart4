@@ -16,5 +16,5 @@ public class CustomerCreateInput
 
     public string? Address { get; set; }
 
-    public List<SaleIdDto>? Sales { get; set; }
+    public List<Sale>? Sales { get; set; }
 }

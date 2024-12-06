@@ -1,7 +1,9 @@
 namespace Aaa.APIs.Dtos;
 
-public class EmployeeDto : EmployeeIdDto
+public class Employee
 {
+    public string Id { get; set; }
+
     public DateTime CreatedAt { get; set; }
 
     public DateTime UpdatedAt { get; set; }
@@ -14,5 +16,5 @@ public class EmployeeDto : EmployeeIdDto
 
     public double? Salary { get; set; }
 
-    public List<SaleIdDto>? Sales { get; set; }
+    public List<string>? Sales { get; set; }
 }
